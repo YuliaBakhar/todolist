@@ -1,0 +1,127 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto";
+}
+body {
+  background: #e0e0e0;
+}
+
+.todo-app {
+  display: flex;
+  overflow: hidden;
+}
+
+.todo-project-title {
+  min-height: 56px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.todo-project-list {
+  width: 150px;
+  overflow: hidden;
+  text-decoration-line: none;
+}
+
+.todo-input {
+  width: 100%;
+  height: 40px;
+  margin-top: 16px;
+  padding: 5px 8px;
+  border: 1px solid gray;
+}
+
+.todo {
+  padding: 10px;
+  align-items: center;
+}
+
+.todo-list {
+  width: 100%;
+  padding: 5px;
+  border: none;
+  font-size: inherit;
+  color: inherit;
+  background: white;
+  align-items: center;
+}
+
+.todo-complete {
+  text-decoration: line-through;
+}
+
+.todo-nav {
+  display: flex;
+  width: 100%;
+  padding: 10px 0;
+  list-style: none;
+}
+
+.todo-nav-list {
+  margin-right: 8px;
+  color: black;
+}
+
+.todo-project-prompt {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.todo-project-error {
+  color: red;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.todo-edit {
+  width: 100%;
+  border: 1px solid grey;
+}
+
+.todo-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.todo-el {
+  background: white;
+  width: 100px;
+  height: 100px;
+}
+
+.todo-project {
+  display: flex;
+  width: 100%;
+}
+
+.task-input {
+  width: 100%;
+  height: 40px;
+  padding: 5px 8px;
+  border: 1px solid gray;
+}
+
+.task-description {
+  width: 100%;
+  height: 80px;
+  padding: 5px 8px;
+  border: 1px solid gray;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .todo-project-form {
+    display: none;
+  }
+}

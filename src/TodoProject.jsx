@@ -63,17 +63,6 @@ const addDescription = (projects, projectId, id, text) => {
 };
 
 const addSubtask = (projects, projectId, id, subtask) => {
-  // console.log(
-  //   projects,
-  //   "project",
-  //   projectId,
-  //   "projectId",
-  //   id,
-  //   "id",
-  //   subtask,
-  //   "subtask"
-  // );
-  // console.log(projects);
   return projects.map(project =>
     projectId === project.id
       ? {
@@ -141,14 +130,13 @@ class TodoProject extends Component {
                   complete: false,
                   editing: false,
                   subtasks: [],
-                  description: ""
+                  descripion: ""
                 }
               ]
             }
           : project
       )
     });
-    console.log(this.state);
   };
 
   onEditTodo = (projectId, id) => {
@@ -174,24 +162,44 @@ class TodoProject extends Component {
     });
   };
 
+  onToggleTodo = (projectId, id) => {
+    this.setState({
+      projects: toggleItem(this.state.projects, projectId, id)
+    });
+  };
+
   onAddDescription = (projectId, id, text) => {
     this.setState({
       projects: addDescription(this.state.projects, projectId, id, text)
     });
-    console.log(this.state.projects);
   };
 
   onAddSubtask = (projectId, id, subtask) => {
-    console.log(subtask);
     this.setState({
       projects: addSubtask(this.state.projects, projectId, id, subtask)
     });
-    console.log(this.state.projects, "in todo project");
   };
 
-  onToggleTodo = (projectId, id) => {
+  onDeleteSubtask = (projectId, todoId, id) => {
+    const { projects } = this.state;
     this.setState({
-      projects: toggleItem(this.state.projects, projectId, id)
+      projects: projects.map(project =>
+        projectId === project.id
+          ? {
+              ...project,
+              todos: project.todos.map(todo =>
+                todo.id === todoId
+                  ? {
+                      ...todo,
+                      subtasks: todo.subtasks.filter(
+                        subtask => subtask.id !== id
+                      )
+                    }
+                  : todo
+              )
+            }
+          : project
+      )
     });
   };
 
@@ -203,7 +211,6 @@ class TodoProject extends Component {
           <TodoProjectForm
             projects={projects}
             onDelete={this.onDeleteProject}
-            todos={projects.todos}
             onCreate={this.addProject}
           />
           {projects.map(project => (
@@ -221,6 +228,7 @@ class TodoProject extends Component {
                   onSaveTodo={this.onSaveTodo}
                   onAddDescription={this.onAddDescription}
                   onAddSubtask={this.onAddSubtask}
+                  onDeleteSubtask={this.onDeleteSubtask}
                 />
               )}
             />

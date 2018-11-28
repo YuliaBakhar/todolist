@@ -8,6 +8,7 @@ const classNames = require("classnames");
 
 const MyCard = styled(Card)({
   display: "flex",
+  alignItems: " center",
   marginTop: "10px",
   padding: "6px",
   width: "100%",

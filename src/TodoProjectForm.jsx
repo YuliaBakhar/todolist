@@ -19,6 +19,9 @@ const MyCard = styled(Card)({
 });
 
 const styles = theme => ({
+  width: {
+    width: "5px"
+  },
   margin: {
     margin: theme.spacing.unit * 2
   },
@@ -102,7 +105,7 @@ class TodoForm extends Component {
                 <Badge
                   color="primary"
                   badgeContent={`${project.todos.length}`}
-                  className={classes.margin}
+                  className={`${classes.margin}`}
                 >
                   <Typography className={classes.padding}>Task</Typography>
                 </Badge>

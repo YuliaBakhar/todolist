@@ -5,16 +5,15 @@ import TodoList from "./TodoList";
 import TodoListTask from "./TodoListTask";
 import queryString from "query-string";
 import IconButton from "@material-ui/core/IconButton";
-// import Button from "@material-ui/core/Button";
 import { Route } from "react-router-dom";
 import Card from "@material-ui/core/Card";
 import { styled } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const MyCard = styled(Card)({
-  //margin: "0 auto",
   width: "700px",
   height: "100vh",
   overflow: "auto",
@@ -48,13 +47,22 @@ class Todo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      task: ""
+      task: null
     };
   }
+
   onOpenTodo = item => {
     this.setState({
       task: item
     });
+  };
+
+  onBackClick = () => {
+    this.setState({
+      task: null,
+      descIsOpen: false
+    });
+    this.props.history.push(`/${this.props.project.text}`);
   };
 
   render() {
@@ -69,7 +77,8 @@ class Todo extends Component {
       onEditTodo,
       onSaveTodo,
       onAddDescription,
-      onAddSubtask
+      onAddSubtask,
+      onDeleteSubtask
     } = this.props;
 
     const { filter } = queryString.parse(location.search);
@@ -88,12 +97,18 @@ class Todo extends Component {
                 <IconButton onClick={() => history.push("/")}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
+                    version="1.1"
+                    viewBox="0 0 212.982 212.982"
+                    width="16px"
+                    height="16px"
                   >
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M131.804,106.491l75.936-75.936c6.99-6.99,6.99-18.323,0-25.312
+                        c-6.99-6.99-18.322-6.99-25.312,0l-75.937,75.937L30.554,5.242c-6.99-6.99-18.322-6.99-25.312,0c-6.989,6.99-6.989,18.323,0,25.312
+                        l75.937,75.936L5.242,182.427c-6.989,6.99-6.989,18.323,0,25.312c6.99,6.99,18.322,6.99,25.312,0l75.937-75.937l75.937,75.937
+                        c6.989,6.99,18.322,6.99,25.312,0c6.99-6.99,6.99-18.322,0-25.312L131.804,106.491z"
+                      fill="#FFFFFF"
+                    />
                   </svg>
                 </IconButton>
               </MyToolbar>
@@ -112,27 +127,41 @@ class Todo extends Component {
                 onSaveTodo={(text, id) => onSaveTodo(project.id, text, id)}
                 onOpenTodo={this.onOpenTodo}
               />
-              <br />
             </div>
           </div>
         </MyCard>
 
-        <Route
-          path={`${match.path}/:todoId`}
-          render={props => (
-            <TodoListTask
-              {...props}
-              task={this.state.task}
-              project={project}
-              onAddDescription={text =>
-                onAddDescription(project.id, this.state.task.id, text)
-              }
-              onAddSubtask={subtask =>
-                onAddSubtask(project.id, this.state.task.id, subtask)
-              }
-            />
-          )}
-        />
+        <TransitionGroup>
+          <CSSTransition
+            key={this.state.task ? this.state.task.id : null}
+            timeout={500}
+            classNames="fade"
+          >
+            <div className="todo-task">
+              <Route
+                path={`${match.path}/:todoId`}
+                render={props => (
+                  <TodoListTask
+                    {...props}
+                    in={this.state.in}
+                    project={project}
+                    todos={visibleTodos}
+                    onBackClick={this.onBackClick}
+                    onAddDescription={text =>
+                      onAddDescription(project.id, this.state.task.id, text)
+                    }
+                    onAddSubtask={(taskId, subtask) =>
+                      onAddSubtask(project.id, taskId, subtask)
+                    }
+                    onDeleteSubtask={(taskId, id) =>
+                      onDeleteSubtask(project.id, taskId, id)
+                    }
+                  />
+                )}
+              />
+            </div>
+          </CSSTransition>
+        </TransitionGroup>
       </div>
     );
   }

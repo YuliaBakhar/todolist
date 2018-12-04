@@ -33,7 +33,7 @@ class TodoListTask extends Component {
   onAddDescription = e => {
     const { text } = this.state;
     e.preventDefault();
-    this.props.onAddDescription(text);
+    this.props.onAddDescription(this.props.match.params.todoId, text);
   };
 
   onChangeDescription = e => {

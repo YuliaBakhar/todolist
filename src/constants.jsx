@@ -1,0 +1,10 @@
+export const ADD_PROJECT = "ADD_PROJECT";
+export const DELETE_PROJECT = "DELETE_PROJECT";
+export const ADD_TODO = "ADD_TODO";
+export const TOGGLE_TODO = "TOGGLE_TODO";
+export const DELETE_TODO = "DELETE_TODO";
+export const EDIT_TODO = "EDIT_TODO";
+export const SAVE_TODO = "SAVE_TODO";
+export const ADD_DESCRITION = "ADD_DESCRITION";
+export const ADD_SUBTASK = "ADD_SUBTASK";
+export const DELETE_SUBTASK = "DELETE_SUBTASK";

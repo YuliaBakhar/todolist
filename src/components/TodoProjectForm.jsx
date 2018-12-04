@@ -11,6 +11,9 @@ import Card from "@material-ui/core/Card";
 import { styled } from "@material-ui/styles";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as ProjectActions from "../actions";
 
 const MyCard = styled(Card)({
   padding: "10px",
@@ -30,24 +33,23 @@ const styles = theme => ({
   }
 });
 
-class TodoForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: "",
-      error: ""
-    };
-  }
+class TodoProjectForm extends Component {
+  todoProjectInput = React.createRef();
+
+  state = {
+    text: "",
+    error: ""
+  };
 
   componentDidMount() {
-    this.todoProjectInput.focus();
+    this.todoProjectInput.current.focus();
   }
 
   onSubmit = e => {
     const { text } = this.state;
     e.preventDefault();
     if (text.trim() === "" || text === "/") return;
-    this.props.onCreate(text, this.props.projectId);
+    this.props.actions.addProject(text);
     this.setState({
       text: ""
     });
@@ -68,7 +70,7 @@ class TodoForm extends Component {
 
   render() {
     const { text } = this.state;
-    const { projects, onDelete, classes } = this.props;
+    const { projects, classes } = this.props;
     return (
       <div>
         <MyCard className="todo-project-form">
@@ -81,9 +83,7 @@ class TodoForm extends Component {
               className="todo-input"
               placeholder="Enter project name"
               value={text}
-              ref={input => {
-                this.todoProjectInput = input;
-              }}
+              ref={this.todoProjectInput}
               onChange={this.onChange}
             />
             <div className="todo-project-error">{this.state.error}</div>
@@ -110,7 +110,7 @@ class TodoForm extends Component {
                   <Typography className={classes.padding}>Task</Typography>
                 </Badge>
                 <IconButton
-                  onClick={() => onDelete(project.id)}
+                  onClick={() => this.props.actions.deleteProject(project.id)}
                   aria-label="Delete"
                 >
                   <DeleteIcon />
@@ -125,8 +125,21 @@ class TodoForm extends Component {
   }
 }
 
-TodoForm.propTypes = {
+TodoProjectForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(TodoForm);
+const mapStateToProps = state => ({
+  projects: state.projects
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(ProjectActions, dispatch)
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(TodoProjectForm));

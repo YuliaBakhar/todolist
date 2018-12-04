@@ -15,7 +15,7 @@ const MyCard = styled(Card)({
   height: "60px"
 });
 
-class TodoList extends Component {
+class Todo extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -46,14 +46,7 @@ class TodoList extends Component {
   };
 
   render() {
-    const {
-      todos,
-      message,
-      onToggleTodo,
-      onDeleteTodo,
-      onOpenTodo,
-      match
-    } = this.props;
+    const { todos, message, match, onToggleTodo, onDeleteTodo } = this.props;
     return (
       <div>
         {todos.length === 0
@@ -100,7 +93,9 @@ class TodoList extends Component {
                       pathname: `${match.url}/${item.id}`
                     }}
                   >
-                    <Button onClick={() => onOpenTodo(item)}>
+                    <Button
+                    // onClick={() => onOpenTodo(item)}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -120,4 +115,4 @@ class TodoList extends Component {
   }
 }
 
-export default TodoList;
+export default Todo;

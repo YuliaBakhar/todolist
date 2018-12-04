@@ -1,16 +1,19 @@
 import React, { Component } from "react";
 import TodoNav from "./TodoNav.jsx";
 import TodoForm from "./TodoForm";
-import TodoList from "./TodoList";
-import TodoListTask from "./TodoListTask";
+import Todo from "./Todo";
 import queryString from "query-string";
-import IconButton from "@material-ui/core/IconButton";
-import { Route } from "react-router-dom";
 import Card from "@material-ui/core/Card";
+import IconButton from "@material-ui/core/IconButton";
 import { styled } from "@material-ui/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as ProjectActions from "../actions";
+import { Route } from "react-router-dom";
+import TodoListTask from "./TodoListTask";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const MyCard = styled(Card)({
@@ -43,7 +46,7 @@ const filterMessage = filter => {
   else if (filter === FILTER_ALL) return "Add your tasks.";
 };
 
-class Todo extends Component {
+class TodoList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,28 +62,13 @@ class Todo extends Component {
 
   onBackClick = () => {
     this.setState({
-      task: null,
-      descIsOpen: false
+      task: null
     });
     this.props.history.push(`/${this.props.project.text}`);
   };
 
   render() {
-    const {
-      project,
-      match,
-      location,
-      history,
-      onAddTodo,
-      onDeleteTodo,
-      onToggleTodo,
-      onEditTodo,
-      onSaveTodo,
-      onAddDescription,
-      onAddSubtask,
-      onDeleteSubtask
-    } = this.props;
-
+    const { match, location, history, project } = this.props;
     const { filter } = queryString.parse(location.search);
     const visibleTodos = filterTodos(filter, project.todos);
     const message = filterMessage(filter);
@@ -115,22 +103,31 @@ class Todo extends Component {
             </AppBar>
             <div className="todo">
               <TodoNav path={match.path} />
-              <TodoForm onAddTodo={text => onAddTodo(text, project.id)} />
-              <TodoList
+              <TodoForm
+                onAddTodo={text => this.props.actions.addTodo(text, project.id)}
+              />
+              <Todo
                 location={location}
                 match={match}
                 message={message}
+                {...project}
                 todos={visibleTodos}
-                onDeleteTodo={id => onDeleteTodo(project.id, id)}
-                onToggleTodo={id => onToggleTodo(project.id, id)}
-                onEditTodo={id => onEditTodo(project.id, id)}
-                onSaveTodo={(text, id) => onSaveTodo(project.id, text, id)}
-                onOpenTodo={this.onOpenTodo}
+                onDeleteTodo={id =>
+                  this.props.actions.deleteTodo(id, project.id)
+                }
+                onToggleTodo={id =>
+                  this.props.actions.toggleTodo(id, project.id)
+                }
+                onEditTodo={id => this.props.actions.editTodo(id, project.id)}
+                onSaveTodo={(text, id) =>
+                  this.props.actions.saveTodo(text, id, project.id)
+                }
+                // onOpenTodo={this.onOpenTodo}
               />
             </div>
           </div>
         </MyCard>
-
+        {console.log(this.state)}
         <TransitionGroup>
           <CSSTransition
             key={this.state.task ? this.state.task.id : null}
@@ -143,18 +140,21 @@ class Todo extends Component {
                 render={props => (
                   <TodoListTask
                     {...props}
-                    in={this.state.in}
                     project={project}
                     todos={visibleTodos}
                     onBackClick={this.onBackClick}
-                    onAddDescription={text =>
-                      onAddDescription(project.id, this.state.task.id, text)
+                    onAddDescription={(text, taskId) =>
+                      this.props.actions.addDescription(
+                        text,
+                        taskId,
+                        project.id
+                      )
                     }
                     onAddSubtask={(taskId, subtask) =>
-                      onAddSubtask(project.id, taskId, subtask)
+                      this.props.actions.addSubtask(subtask, taskId, project.id)
                     }
                     onDeleteSubtask={(taskId, id) =>
-                      onDeleteSubtask(project.id, taskId, id)
+                      this.props.actions.deleteSubtask(id, taskId, project.id)
                     }
                   />
                 )}
@@ -167,4 +167,17 @@ class Todo extends Component {
   }
 }
 
-export default Todo;
+const mapStateToProps = state => ({
+  todos: state.todos
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(ProjectActions, dispatch)
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoList);
